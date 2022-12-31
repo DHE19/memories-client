@@ -4,7 +4,7 @@ const NavLinks = () => {
     return (
         <ul className="text-white font-semibold flex gap-4">
             <li className="cursor-poiner">Prices</li>
-            <li className="cursor-poiner">Abouts</li>
+            <li className="cursor-poiner"> <Link to={'/posts'}>Posts</Link></li>
             <li className="cursor-poiner"> <Link to={'/login'}>Login</Link></li>
         </ul>
     )

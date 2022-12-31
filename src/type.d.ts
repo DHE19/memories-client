@@ -1,3 +1,13 @@
+
+export interface IPostPagination{
+    currentPage: number;
+    data: IOnlinePost[]
+    numberOfPages: number;
+}
+export interface IQuerySearch{
+   search:string;
+   tags:string;
+}
 export interface ICredentials{
 
    result:{
@@ -24,19 +34,22 @@ export interface IAuthState {
 }
 export interface IState{
    posts:Array<IOnlinePost>;
-   postIdToUpdate:string | null
+   postIdToUpdate:string | null;
+   currentPage:number;
+   numberOfPages:number;
 }
 
 export interface IPost{
+   //aquí debemos de añadir la propiedad name, para que se sepa quien es el autor, creator se le asginará el id
+   name:string;
    title:string;
    message:string;
-   creator:string;
    tags:string[];
    selectedFile:string;
-   likeCount: Number = 0;
-   
+   likes: string[] = [];
 }
 export interface IOnlinePost extends IPost {
+   creator:string;
    _id: string;
    createdAt:Date;
    __v:number
@@ -45,8 +58,8 @@ export interface IOnlinePost extends IPost {
 export type ILocalPost  = Omit<IPost,'likeCount' | 'tags' > & {tags:string}
 
 type IPostActions = {
-   type: 'CREATE' | 'FETCH_ALL' | 'UPDATE' |'ID_SELECTED' | 'DELETE';
-   payload:Array<IOnlinePost> | string | IOnlinePost | null;
+   type: 'CREATE' | 'FETCH_POST' | 'UPDATE' |'ID_SELECTED' | 'DELETE' | 'FETCH_BY_SEARCH';
+   payload:Array<IOnlinePost> | string | IOnlinePost | null | IPostPagination;
 }
 
 interface IAuthActions {

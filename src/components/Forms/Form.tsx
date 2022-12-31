@@ -6,12 +6,17 @@ import { useDispatch, useSelector } from "react-redux";
 import { Dispatch } from "redux";
 import { createPost, setID, updatePost } from "../../redux/actions/post";
 import { AppState } from "../../redux/reducers";
-const EmptyElement:ILocalPost  = {title:'',creator:'',tags:'',message:'', selectedFile:''}
+const EmptyElement:ILocalPost  = {title:'',tags:'',message:'', selectedFile:'', name:'',likes:[]}
 const Form = () => {
     const {postIdToUpdate,posts} = useSelector((state:AppState) => state.posts)
+    const {user} = useSelector((state:AppState) => state.auth)
     const dispatch:Dispatch<any> = useDispatch();
     const [postData, setPostData] = useState<ILocalPost>( EmptyElement);
-
+    //debes definir un condicional, si el usuario no se ha logeado (para ello requerimos recuperar los datos almacenados en store)
+    //y con ese mismo de usuario debes de colocar el nombre del autor del post
+    
+   
+    
     const handleSubmit = (e:React.FormEvent<HTMLFormElement>) =>{
             e.preventDefault();
             // si tiene valor
@@ -23,10 +28,11 @@ const Form = () => {
                     __v:newpost.__v,
                     _id:newpost._id,
                     createdAt: newpost.createdAt,
-                    likeCount:newpost.likeCount,
+                    likes:newpost.likes,
+                    creator:newpost.creator,
                     tags:postData.tags.split(' ')}));
             }else{
-                const newPost:IPost = {...postData, tags:postData.tags.split(' '), likeCount:0}
+                const newPost:IPost = {...postData, tags:postData.tags.split(' '), likes:[],name:user!.result.name }
                 dispatch(createPost(newPost));
             }
             handleClear();
@@ -40,6 +46,10 @@ const Form = () => {
         
     }
 
+    useEffect(() => {
+        if(user)setPostData({...postData,name:user.result.name});
+        
+    },[user]);
 
     useEffect(() => {
         // tiene valor
@@ -52,17 +62,21 @@ const Form = () => {
         
     }, [postIdToUpdate,posts])
 
+
+    if(!user){
+        return (
+                    <div>
+                        <div className="text-center text-white text-4xl font-bold">
+                            <h2>You need to be logged to post a new memory</h2>
+                        </div>
+                    </div>
+                )
+    }
+
     return (
-        <div className="form-section">
-                <h1 className="text-center text-2xl font-bold">Creando una Memoria</h1>
-            <form onSubmit={handleSubmit} className="flex flex-col md:p-3">
-               <FormInput
-               type="text"
-               name="creator"
-               title="Creador"
-               value={postData.creator}
-               onChange={(s) => setPostData({...postData,creator:s})}
-               />
+        <div className="form-section overflow-hidden">
+                <h1 className="text-center text-2xl font-semibold">Crear Memoria</h1>
+            <form onSubmit={handleSubmit} className="flex flex-col lg:p-2 xl:p-0">
                 <FormInput
                 type="text"
                 name="title"
@@ -88,11 +102,11 @@ const Form = () => {
                     <FormInputImage setValue={(s:string) => setPostData({...postData,selectedFile:s})}/>
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-2  gap-2 mt-4 items-center">
-                    <button className="px-4 py-3 bg-green-500 hover:bg-green-600 rounded-md">{`${!postIdToUpdate ? 'Submit': 'Update'}`}</button>
+                    <button className="px-4 py-3 border-2 transition-all duration-300 border-green-400 hover:bg-green-400 hover:shadow-md hover:text-green-100 rounded-md">{`${!postIdToUpdate ? 'Submit': 'Update'}`}</button>
                     <button 
                     type="button"
                     onClick={handleClear}
-                    className="px-4 py-3 bg-red-500 hover:bg-red-600 rounded-md">{`${!postIdToUpdate ? 'Clear': 'Cancel'}`}</button>
+                    className="px-4 py-3 border-2 border-red-400 ransition-all duration-300 hover:bg-red-400 hover:shadow-md rounded-md hover:text-red-100">{`${!postIdToUpdate ? 'Clear': 'Cancel'}`}</button>
                 </div>
             </form>
         </div>

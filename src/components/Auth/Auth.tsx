@@ -16,10 +16,10 @@ const Auth = () => {
     const handleSubmit = (e:FormEvent<HTMLFormElement>, type:'signup'|'login') =>{
             e.preventDefault();
             if(type === "login") dispatch(logIn({email:formData.email, password:formData.password},
-                () => navigation('/')));
+                () => navigation('/posts')));
 
             else if(type === 'signup')dispatch(signUp(formData,
-                () => navigation('/')));
+                () => navigation('/posts')));
     }
 
     const handleChange = (id:string,value:string) =>{

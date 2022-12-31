@@ -1,13 +1,29 @@
 import * as api from '../../api';
-import { DispatchType, IOnlinePost, IPost, IPostActions } from '../../type';
+import { DispatchType, IOnlinePost, IPost, IPostActions, IPostPagination, IQuerySearch } from '../../type';
 
 
-//return all the posts that comes from the sever
-export const getPosts = () => async(dispatch:DispatchType) =>{
+
+
+export const getPosts = (page:number) => async(dispatch:DispatchType) =>{
+
+     try {
+          const {data} = await api.fetchPostsPage(page);
+          const info: IPostPagination = {...data}
+          dispatch( {type:'FETCH_POST',payload:info});
+     } catch (error:any) {
+          console.log(error.message);
+     }
+}
+
+
+     export const getPostsBySearch = (searchQuery:IQuerySearch) => async(dispatch:DispatchType) =>{
      
+          console.log('estos son los a enviar',searchQuery);
           try {
-               const {data} = await api.fetchPosts();
-               dispatch( {type:'FETCH_ALL',payload:data});
+               const {data} = await api.fetchPostsBySearch(searchQuery);
+
+               dispatch( {type:'FETCH_BY_SEARCH',payload:data});
+               
           } catch (error:any) {
                console.log(error.message);
           }
